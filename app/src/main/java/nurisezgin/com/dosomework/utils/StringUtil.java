@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * Created by nuri on 25.07.2018
  */
-public class StringUtil {
+public final class StringUtil {
 
     public static final String EMPTY_STRING = "";
 
