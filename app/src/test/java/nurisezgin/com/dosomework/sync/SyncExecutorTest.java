@@ -1,4 +1,4 @@
-package nurisezgin.com.dosomework;
+package nurisezgin.com.dosomework.sync;
 
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Created by nuri on 25.07.2018
  */
-public class DoSomeWorkTest {
+public class SyncExecutorTest {
 
     @Test
     public void should_ThenActionPerformCorrect() {

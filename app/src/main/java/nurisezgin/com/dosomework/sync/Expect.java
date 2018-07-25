@@ -1,4 +1,4 @@
-package nurisezgin.com.dosomework;
+package nurisezgin.com.dosomework.sync;
 
 import com.annimon.stream.Stream;
 import com.annimon.stream.function.Consumer;
@@ -12,13 +12,13 @@ import java.util.List;
  */
 public final class Expect<T> {
 
-    private DoSomeWork<T> executor;
+    private SyncExecutor<T> executor;
     private Predicate<T> condition;
     private List<Consumer<T>> positiveActions = new ArrayList<>();
     private Expect<T> or;
     private Consumer<T> negativeAction = o -> {};
 
-    public Expect(DoSomeWork<T> executor, Predicate<T> condition) {
+    public Expect(SyncExecutor<T> executor, Predicate<T> condition) {
         this.executor = executor;
         this.condition = condition;
     }
