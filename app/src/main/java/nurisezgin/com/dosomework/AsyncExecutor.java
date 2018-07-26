@@ -2,16 +2,15 @@ package nurisezgin.com.dosomework;
 
 import com.annimon.stream.function.Supplier;
 
-import nurisezgin.com.dosomework.async.ConsumerAsyncListener;
+import nurisezgin.com.dosomework.async.AsyncConsumerListener;
 import nurisezgin.com.dosomework.async.ExpectAsync;
-import nurisezgin.com.dosomework.async.PredicateAsync;
-import nurisezgin.com.dosomework.async.PredicateAsyncListener;
-import nurisezgin.com.dosomework.utils.CollectionsUtil;
+import nurisezgin.com.dosomework.async.AsyncPredicate;
+import nurisezgin.com.dosomework.async.AsyncPredicateListener;
 
 /**
  * Created by nuri on 25.07.2018
  */
-public final class AsyncExecutor<T> implements PredicateAsyncListener, ConsumerAsyncListener {
+public final class AsyncExecutor<T> implements AsyncPredicateListener, AsyncConsumerListener {
 
     private Supplier<T> supplier;
     private ExpectAsync<T> expect;
@@ -21,51 +20,41 @@ public final class AsyncExecutor<T> implements PredicateAsyncListener, ConsumerA
         this.supplier = supplier;
     }
 
-    public ExpectAsync<T> expect(PredicateAsync<T> condition) {
+    public ExpectAsync<T> expect(AsyncPredicate<T> condition) {
         expect = new ExpectAsync<>(this, condition);
         return expect;
     }
 
     public void done() {
+        current = null;
         work(expect);
     }
 
     private void work(ExpectAsync<T> expect) {
         current = expect;
-
-        current.condition.addListener(this);
-        current.condition.test(supplier.get());
-    }
-
-    @Override
-    public void onFinished() {
-        current.queuePositiveActions.remove().removeListener(this);
-
-        if (CollectionsUtil.shouldNotEmpty(current.queuePositiveActions)) {
-            execThen();
-        }
-    }
-
-    private void execThen() {
-        current.queuePositiveActions.peek().addListener(this);
-        current.queuePositiveActions.peek().accept(supplier.get());
+        current.is(supplier.get(), this);
     }
 
     @Override
     public void onTrue() {
-        current.condition.removeListener(this);
-        execThen();
+        current.removePredicateListener(this);
+        current.doThen(supplier.get(), this);
     }
 
     @Override
     public void onFalse() {
-        current.condition.removeListener(this);
+        current.removePredicateListener(this);
 
-        if (current.or != null) {
-            work(current.or);
-        } else if (current.negativeAction != null){
-            current.negativeAction.addListener(this);
-            current.negativeAction.accept(supplier.get());
+        if (current.hasOrCondition()) {
+            work(current.or());
+        } else {
+            current.doOtherwise(supplier.get(), this);
         }
+    }
+
+    @Override
+    public void onFinished() {
+        current.finishedAction(this);
+        current.doThen(supplier.get(), this);
     }
 }

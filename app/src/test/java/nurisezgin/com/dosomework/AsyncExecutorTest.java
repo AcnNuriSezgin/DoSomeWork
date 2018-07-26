@@ -4,9 +4,9 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
-import nurisezgin.com.dosomework.testutils.TestConsumerAsync;
+import nurisezgin.com.dosomework.testutils.TestAsyncConsumer;
 import nurisezgin.com.dosomework.testutils.TestObject;
-import nurisezgin.com.dosomework.testutils.TestPredicateAsync;
+import nurisezgin.com.dosomework.testutils.TestAsyncPredicate;
 import nurisezgin.com.dosomework.utils.StringUtil;
 
 import static nurisezgin.com.dosomework.DoSomeWork.thatAsync;
@@ -24,8 +24,8 @@ public class AsyncExecutorTest {
         TestObject object = new TestObject();
 
         thatAsync(() -> "Value")
-                .expect(new TestPredicateAsync(StringUtil::shouldNotEmpty))
-                .then(new TestConsumerAsync(str -> object.setId(expected)))
+                .expect(new TestAsyncPredicate(StringUtil::shouldNotEmpty))
+                .then(new TestAsyncConsumer(str -> object.setId(expected)))
                 .done();
 
         waitUntil(expected, object);
@@ -37,10 +37,10 @@ public class AsyncExecutorTest {
         TestObject object = new TestObject();
 
         thatAsync(() -> "Value")
-                .expect(new TestPredicateAsync(StringUtil::shouldNotEmpty))
-                .then(new TestConsumerAsync(str -> object.setId(1)))
-                .then(new TestConsumerAsync(str -> object.setId(2)))
-                .then(new TestConsumerAsync(str -> object.setId(expected)))
+                .expect(new TestAsyncPredicate(StringUtil::shouldNotEmpty))
+                .then(new TestAsyncConsumer(str -> object.setId(1)))
+                .then(new TestAsyncConsumer(str -> object.setId(2)))
+                .then(new TestAsyncConsumer(str -> object.setId(expected)))
                 .done();
 
         waitUntil(expected, object);
@@ -52,9 +52,9 @@ public class AsyncExecutorTest {
         TestObject object = new TestObject();
 
         thatAsync(() -> "")
-                .expect(new TestPredicateAsync(StringUtil::shouldNotEmpty))
-                .then(new TestConsumerAsync(str -> object.setId(1)))
-                .otherwise(new TestConsumerAsync(str -> object.setId(-1)));
+                .expect(new TestAsyncPredicate(StringUtil::shouldNotEmpty))
+                .then(new TestAsyncConsumer(str -> object.setId(1)))
+                .otherwise(new TestAsyncConsumer(str -> object.setId(-1)));
 
         waitUntil(expected, object);
     }
@@ -65,10 +65,10 @@ public class AsyncExecutorTest {
         TestObject object = new TestObject();
 
         thatAsync(() -> "Value")
-                .expect(new TestPredicateAsync(StringUtil::shouldEmpty))
-                .then(new TestConsumerAsync(str -> object.setId(1)))
-                .or(new TestPredicateAsync(StringUtil::shouldNotEmpty))
-                .then(new TestConsumerAsync(str -> object.setId(expected)))
+                .expect(new TestAsyncPredicate(StringUtil::shouldEmpty))
+                .then(new TestAsyncConsumer(str -> object.setId(1)))
+                .or(new TestAsyncPredicate(StringUtil::shouldNotEmpty))
+                .then(new TestAsyncConsumer(str -> object.setId(expected)))
                 .done();
 
         waitUntil(expected, object);
@@ -80,13 +80,13 @@ public class AsyncExecutorTest {
         TestObject object = new TestObject();
 
         thatAsync(() -> "Value")
-                .expect(new TestPredicateAsync(StringUtil::shouldEmpty))
-                .then(new TestConsumerAsync(str -> object.setId(1)))
-                .or(new TestPredicateAsync(str -> len(str) < 3))
-                .then(new TestConsumerAsync(str -> object.setId(11)))
-                .then(new TestConsumerAsync(str -> object.setId(12)))
-                .then(new TestConsumerAsync(str -> object.setId(13)))
-                .otherwise(new TestConsumerAsync(str -> object.setId(expected)));
+                .expect(new TestAsyncPredicate(StringUtil::shouldEmpty))
+                .then(new TestAsyncConsumer(str -> object.setId(1)))
+                .or(new TestAsyncPredicate(str -> len(str) < 3))
+                .then(new TestAsyncConsumer(str -> object.setId(11)))
+                .then(new TestAsyncConsumer(str -> object.setId(12)))
+                .then(new TestAsyncConsumer(str -> object.setId(13)))
+                .otherwise(new TestAsyncConsumer(str -> object.setId(expected)));
 
         waitUntil(expected, object);
     }

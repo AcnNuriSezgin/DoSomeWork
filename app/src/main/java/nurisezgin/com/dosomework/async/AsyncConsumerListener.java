@@ -3,10 +3,8 @@ package nurisezgin.com.dosomework.async;
 /**
  * Created by nuri on 25.07.2018
  */
-public interface PredicateAsyncListener {
+public interface AsyncConsumerListener {
 
-    void onTrue();
-
-    void onFalse();
+    void onFinished();
 
 }

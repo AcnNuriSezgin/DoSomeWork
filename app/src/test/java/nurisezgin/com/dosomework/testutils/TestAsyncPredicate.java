@@ -2,17 +2,17 @@ package nurisezgin.com.dosomework.testutils;
 
 import com.annimon.stream.function.Predicate;
 
-import nurisezgin.com.dosomework.async.PredicateAsync;
+import nurisezgin.com.dosomework.async.AsyncPredicate;
 
 /**
  * Created by nuri on 26.07.2018
  */
-public class TestPredicateAsync extends PredicateAsync<String> {
+public class TestAsyncPredicate extends AsyncPredicate<String> {
 
     private static final long WAIT_DURATION = 150;
     private Predicate<String> predicate;
 
-    public TestPredicateAsync(Predicate<String> predicate) {
+    public TestAsyncPredicate(Predicate<String> predicate) {
         this.predicate = predicate;
     }
 
@@ -39,4 +39,9 @@ public class TestPredicateAsync extends PredicateAsync<String> {
             }
         }.start();
     }
+
+    public long waitDuration() {
+        return WAIT_DURATION;
+    }
+
 }

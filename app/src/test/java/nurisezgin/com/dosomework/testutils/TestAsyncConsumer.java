@@ -2,17 +2,17 @@ package nurisezgin.com.dosomework.testutils;
 
 import com.annimon.stream.function.Consumer;
 
-import nurisezgin.com.dosomework.async.ConsumerAsync;
+import nurisezgin.com.dosomework.async.AsyncConsumer;
 
 /**
  * Created by nuri on 26.07.2018
  */
-public class TestConsumerAsync extends ConsumerAsync<String> {
+public class TestAsyncConsumer extends AsyncConsumer<String> {
 
     private static final long WAIT_DURATION = 350;
     private Consumer<String> consumer;
 
-    public TestConsumerAsync(Consumer<String> consumer) {
+    public TestAsyncConsumer(Consumer<String> consumer) {
         this.consumer = consumer;
     }
 
@@ -31,5 +31,9 @@ public class TestConsumerAsync extends ConsumerAsync<String> {
                 onFinished();
             }
         }.start();
+    }
+
+    public long waitDuration() {
+        return WAIT_DURATION;
     }
 }
