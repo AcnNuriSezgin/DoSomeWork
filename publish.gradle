@@ -1,0 +1,52 @@
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+def GROUP_ID = GROUP_NAME
+def ARTIFACT_ID = ARTIFACT_NAME
+def VERSION = VERSION_NAME
+
+def getUserName() {
+    return hasProperty('USER') ? USER : System.getenv("user")
+}
+
+def getApiKey() {
+    return hasProperty('API_KEY') ? API_KEY : System.getenv("apikey")
+}
+
+def getPassPhrase() {
+    return hasProperty('PASSPHRASE') ? PASSPHRASE : System.getenv("passphrase")
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            groupId GROUP_ID
+            artifactId ARTIFACT_ID
+            version VERSION
+        }
+    }
+}
+
+bintray {
+    user = getUserName()
+    key = getApiKey()
+    publications = ['MyPublication']
+    pkg {
+        repo = 'android-releases'
+        name = 'dosomework'
+        userOrg = user
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/AcnNuriSezgin/OkHttpCookies'
+        publicDownloadNumbers = true
+        publish = true
+        version {
+            name = VERSION
+            desc = 'OkHttp Cookie Interceptor'
+            gpg {
+                sign = true
+                passphrase = getPassPhrase()
+            }
+        }
+    }
+}

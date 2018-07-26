@@ -30,10 +30,8 @@ public class TestAsyncPredicate extends AsyncPredicate<String> {
                 boolean isSuccess = predicate.test(str);
 
                 if (isSuccess) {
-                    System.out.println("onTrue");
                     onTrue();
                 } else {
-                    System.out.println("onFalse");
                     onFalse();
                 }
             }

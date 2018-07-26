@@ -195,7 +195,7 @@ public class AsyncExecutorTest {
     }
 
     private void waitUntil(int expected, TestObject object) {
-        await().atMost(5, TimeUnit.SECONDS)
+        await().atMost(7, TimeUnit.SECONDS)
                 .until(() -> object.getId() == expected);
     }
 
