@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.concurrent.TimeUnit;
 
 import nurisezgin.com.dosomework.async.ExpectAsync;
+import nurisezgin.com.dosomework.async.Terminable;
 import nurisezgin.com.dosomework.testutils.TestAsyncConsumer;
 import nurisezgin.com.dosomework.testutils.TestObject;
 import nurisezgin.com.dosomework.testutils.TestAsyncPredicate;
@@ -22,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class AsyncExecutorTest {
 
     @Test
-    public void should_DoneWithoutThenCorrect() {
+    public void should_DoneWithoutThenCorrect() throws InterruptedException {
         final int expected = 1;
         TestObject object = new TestObject();
 
@@ -166,6 +167,31 @@ public class AsyncExecutorTest {
         }
 
         assertThat(hasListeners, is(expected));
+    }
+
+    @Test
+    public void should_TerminateCorrect() throws InterruptedException {
+        final int expected = 0;
+        TestObject object = new TestObject();
+
+        Terminable terminable = thatAsync(() -> "Value")
+                .expect(new TestAsyncPredicate(StringUtil::shouldEmpty))
+                .then(new TestAsyncConsumer(str -> object.setId(1)))
+                .or(new TestAsyncPredicate(str -> len(str) < 3))
+                .then(new TestAsyncConsumer(str -> object.setId(11)))
+                .then(new TestAsyncConsumer(str -> object.setId(12)))
+                .then(new TestAsyncConsumer(str -> object.setId(13)))
+                .otherwise(new TestAsyncConsumer(str -> object.setId(expected)));
+
+        TimeUnit.MILLISECONDS.sleep(10);
+
+        terminable.terminate();
+
+        TimeUnit.SECONDS.sleep(5);
+
+        int actual = object.getId();
+
+        assertThat(actual, is(expected));
     }
 
     private void waitUntil(int expected, TestObject object) {

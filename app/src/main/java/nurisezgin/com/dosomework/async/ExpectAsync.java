@@ -73,11 +73,6 @@ public class ExpectAsync<T> {
         return or;
     }
 
-    public void otherwise(AsyncConsumer<T> negativeAction) {
-        this.negativeAction = negativeAction;
-        done();
-    }
-
     public AsyncConsumer<T> getNegativeAction() {
         return negativeAction;
     }
@@ -87,9 +82,16 @@ public class ExpectAsync<T> {
         doThen(t, listener);
     }
 
-    public void done() {
+    public Terminable otherwise(AsyncConsumer<T> negativeAction) {
+        this.negativeAction = negativeAction;
+        return done();
+    }
+
+    public Terminable done() {
         actionQueue = new LinkedList<>(positiveActions);
         executor.done();
+
+        return executor;
     }
 
     public ExpectAsync<T> doOnEnd(Runnable r) {

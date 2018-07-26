@@ -16,7 +16,7 @@ public final class AsyncExecutor<T> implements IAsyncExecutor,
 
     private Supplier<T> supplier;
     private ExpectAsync<T> expect;
-    private ExpectAsync<T> current;
+    private ExpectAsync<T> cursor;
     private Runnable doOnEnd = () -> { };
 
     public AsyncExecutor(Supplier<T> supplier) {
@@ -40,35 +40,55 @@ public final class AsyncExecutor<T> implements IAsyncExecutor,
 
     @Override
     public void onPipelineFinished() {
-        current = null;
-        doOnEnd.run();
+        if (cursor != null) {
+            doOnEnd.run();
+        }
+
+        cursor = null;
     }
 
     private void work(ExpectAsync<T> expect) {
-        current = expect;
-        current.is(supplier.get(), this);
+        cursor = expect;
+        cursor.is(supplier.get(), this);
     }
 
     @Override
     public void onTrue() {
-        current.removePredicateListener(this);
-        current.doThen(supplier.get(), this);
+        if (cursor == null) {
+            return;
+        }
+
+        cursor.removePredicateListener(this);
+        cursor.doThen(supplier.get(), this);
     }
 
     @Override
     public void onFalse() {
-        current.removePredicateListener(this);
+        if (cursor == null) {
+            return;
+        }
 
-        if (current.hasOrCondition()) {
-            work(current.or());
+        cursor.removePredicateListener(this);
+
+        if (cursor.hasOrCondition()) {
+            work(cursor.or());
         } else {
-            current.doOtherwise(supplier.get(), this);
+            cursor.doOtherwise(supplier.get(), this);
         }
     }
 
     @Override
     public void onFinished() {
-        current.finishedAction(this);
-        current.doThen(supplier.get(), this);
+        if (cursor == null) {
+            return;
+        }
+
+        cursor.finishedAction(this);
+        cursor.doThen(supplier.get(), this);
+    }
+
+    @Override
+    public void terminate() {
+        cursor = null;
     }
 }
