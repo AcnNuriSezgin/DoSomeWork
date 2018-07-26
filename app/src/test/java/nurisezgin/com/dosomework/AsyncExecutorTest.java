@@ -22,6 +22,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class AsyncExecutorTest {
 
     @Test
+    public void should_DoneWithoutThenCorrect() {
+        final int expected = 1;
+        TestObject object = new TestObject();
+
+        thatAsync(() -> "Value")
+                .expect(new TestAsyncPredicate(StringUtil::shouldNotEmpty))
+                .doOnEnd(() -> object.setId(expected))
+                .done();
+
+        waitUntil(expected, object);
+    }
+
+    @Test
     public void should_ThenActionPerformCorrect() {
         final int expected = 1;
         TestObject object = new TestObject();

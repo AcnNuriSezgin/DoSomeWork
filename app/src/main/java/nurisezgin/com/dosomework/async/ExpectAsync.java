@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import nurisezgin.com.dosomework.AsyncExecutor;
 import nurisezgin.com.dosomework.utils.CollectionsUtil;
 
 /**
@@ -13,14 +12,14 @@ import nurisezgin.com.dosomework.utils.CollectionsUtil;
  */
 public class ExpectAsync<T> {
 
-    private AsyncExecutor<T> executor;
+    private IAsyncExecutor executor;
     private AsyncPredicate<T> condition;
     private List<AsyncConsumer<T>> positiveActions = new ArrayList<>();
     private Queue<AsyncConsumer<T>> actionQueue;
     private ExpectAsync<T> or;
     private AsyncConsumer<T> negativeAction = new EmptyAsyncConsumer();
 
-    public ExpectAsync(AsyncExecutor<T> executor, AsyncPredicate<T> condition) {
+    public ExpectAsync(IAsyncExecutor executor, AsyncPredicate<T> condition) {
         this.executor = executor;
         this.condition = condition;
     }
@@ -51,6 +50,8 @@ public class ExpectAsync<T> {
         if (CollectionsUtil.shouldNotEmpty(actionQueue)) {
             actionQueue.peek().addListener(listener);
             actionQueue.peek().accept(value);
+        } else {
+            executor.onPipelineFinished();
         }
     }
 
@@ -89,5 +90,10 @@ public class ExpectAsync<T> {
     public void done() {
         actionQueue = new LinkedList<>(positiveActions);
         executor.done();
+    }
+
+    public ExpectAsync<T> doOnEnd(Runnable r) {
+        executor.doOnEnd(r);
+        return this;
     }
 }

@@ -7,20 +7,18 @@ import com.annimon.stream.function.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
-import nurisezgin.com.dosomework.SyncExecutor;
-
 /**
  * Created by nuri on 25.07.2018
  */
 public final class Expect<T> {
 
-    private SyncExecutor<T> executor;
+    private ISyncExecutor executor;
     private Predicate<T> condition;
     private List<Consumer<T>> positiveActions = new ArrayList<>();
     private Expect<T> or;
     private Consumer<T> negativeAction = o -> {};
 
-    public Expect(SyncExecutor<T> executor, Predicate<T> condition) {
+    public Expect(ISyncExecutor executor, Predicate<T> condition) {
         this.executor = executor;
         this.condition = condition;
     }
