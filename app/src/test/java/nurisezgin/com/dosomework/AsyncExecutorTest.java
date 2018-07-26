@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
+import nurisezgin.com.dosomework.async.ExpectAsync;
 import nurisezgin.com.dosomework.testutils.TestAsyncConsumer;
 import nurisezgin.com.dosomework.testutils.TestObject;
 import nurisezgin.com.dosomework.testutils.TestAsyncPredicate;
@@ -12,6 +13,8 @@ import nurisezgin.com.dosomework.utils.StringUtil;
 import static nurisezgin.com.dosomework.DoSomeWork.thatAsync;
 import static nurisezgin.com.dosomework.utils.StringUtil.len;
 import static org.awaitility.Awaitility.await;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Created by nuri on 25.07.2018
@@ -89,6 +92,67 @@ public class AsyncExecutorTest {
                 .otherwise(new TestAsyncConsumer(str -> object.setId(expected)));
 
         waitUntil(expected, object);
+    }
+
+    @Test
+    public void should_ReleaseAllConditionListenersCorrect() {
+        final boolean expected = false;
+        final int lastId = -21;
+        TestObject object = new TestObject();
+
+        ExpectAsync<String> expectAsync = thatAsync(() -> "Value")
+                .expect(new TestAsyncPredicate(StringUtil::shouldEmpty))
+                .then(new TestAsyncConsumer(str -> object.setId(1)));
+
+        expectAsync.or(new TestAsyncPredicate(str -> len(str) < 3))
+                .then(new TestAsyncConsumer(str -> object.setId(11)))
+                .then(new TestAsyncConsumer(str -> object.setId(12)))
+                .then(new TestAsyncConsumer(str -> object.setId(13)))
+                .otherwise(new TestAsyncConsumer(str -> object.setId(lastId)));
+
+        waitUntil(lastId, object);
+
+        boolean hasListeners = false;
+
+        while (expectAsync != null) {
+            hasListeners |= expectAsync.getCondition().listenerCount() > 0;
+            expectAsync = expectAsync.or();
+        }
+
+        assertThat(hasListeners, is(expected));
+    }
+    
+    @Test
+    public void should_ReleaseAllActionListenersCorrect() {
+        final boolean expected = false;
+        final int lastId = -21;
+        TestObject object = new TestObject();
+
+        ExpectAsync<String> expectAsync = thatAsync(() -> "Value")
+                .expect(new TestAsyncPredicate(StringUtil::shouldEmpty))
+                .then(new TestAsyncConsumer(str -> object.setId(1)));
+
+        expectAsync.or(new TestAsyncPredicate(str -> len(str) < 3))
+                .then(new TestAsyncConsumer(str -> object.setId(11)))
+                .then(new TestAsyncConsumer(str -> object.setId(12)))
+                .then(new TestAsyncConsumer(str -> object.setId(13)))
+                .otherwise(new TestAsyncConsumer(str -> object.setId(lastId)));
+
+        waitUntil(lastId, object);
+
+        boolean hasListeners = false;
+
+        while (expectAsync != null) {
+            hasListeners |= !(expectAsync.getPositiveActions()
+                    .stream()
+                    .allMatch(action -> action.listenerCount() == 0));
+
+            hasListeners |= expectAsync.getNegativeAction().listenerCount() > 0;
+
+            expectAsync = expectAsync.or();
+        }
+
+        assertThat(hasListeners, is(expected));
     }
 
     private void waitUntil(int expected, TestObject object) {

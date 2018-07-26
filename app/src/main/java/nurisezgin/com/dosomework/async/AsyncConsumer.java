@@ -50,7 +50,7 @@ public abstract class AsyncConsumer<T> {
                 .forEach(weakListener -> listeners.remove(weakListener));
     }
 
-    protected final int listenerCount() {
+    public final int listenerCount() {
         return listeners.size();
     }
 

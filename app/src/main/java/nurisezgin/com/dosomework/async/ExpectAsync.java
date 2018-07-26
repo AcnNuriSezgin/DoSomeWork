@@ -25,6 +25,10 @@ public class ExpectAsync<T> {
         this.condition = condition;
     }
 
+    public AsyncPredicate<T> getCondition() {
+        return condition;
+    }
+
     public void is(T t, AsyncPredicateListener listener) {
         condition.addListener(listener);
         condition.test(t);
@@ -37,6 +41,10 @@ public class ExpectAsync<T> {
     public ExpectAsync<T> then(AsyncConsumer<T> then) {
         positiveActions.add(then);
         return this;
+    }
+
+    public List<AsyncConsumer<T>> getPositiveActions() {
+        return positiveActions;
     }
 
     public void doThen(T value, AsyncConsumerListener listener) {
@@ -67,6 +75,10 @@ public class ExpectAsync<T> {
     public void otherwise(AsyncConsumer<T> negativeAction) {
         this.negativeAction = negativeAction;
         done();
+    }
+
+    public AsyncConsumer<T> getNegativeAction() {
+        return negativeAction;
     }
 
     public void doOtherwise(T t, AsyncConsumerListener listener) {
