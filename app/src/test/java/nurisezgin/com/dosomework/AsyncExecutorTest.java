@@ -23,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class AsyncExecutorTest {
 
     @Test
-    public void should_DoneWithoutThenCorrect() throws InterruptedException {
+    public void should_DoneWithoutThenCorrect() {
         final int expected = 1;
         TestObject object = new TestObject();
 
