@@ -7,6 +7,8 @@ import com.annimon.stream.function.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
+import nurisezgin.com.dosomework.SyncExecutor;
+
 /**
  * Created by nuri on 25.07.2018
  */
@@ -63,5 +65,4 @@ public final class Expect<T> {
     public void done() {
         executor.done();
     }
-
 }

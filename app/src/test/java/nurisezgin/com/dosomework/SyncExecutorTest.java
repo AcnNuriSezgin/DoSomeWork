@@ -1,7 +1,8 @@
-package nurisezgin.com.dosomework.sync;
+package nurisezgin.com.dosomework;
 
 import org.junit.Test;
 
+import nurisezgin.com.dosomework.testutils.TestObject;
 import nurisezgin.com.dosomework.utils.StringUtil;
 
 import static nurisezgin.com.dosomework.DoSomeWork.that;
@@ -114,19 +115,6 @@ public class SyncExecutorTest {
         int actual = object.getId();
 
         assertThat(actual, is(expected));
-    }
-
-    private static class TestObject {
-
-        private int id;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
     }
 
 }

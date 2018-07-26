@@ -1,17 +1,19 @@
-package nurisezgin.com.dosomework.sync;
+package nurisezgin.com.dosomework;
 
 import com.annimon.stream.function.Predicate;
 import com.annimon.stream.function.Supplier;
 
+import nurisezgin.com.dosomework.sync.Expect;
+
 /**
  * Created by nuri on 25.07.2018
  */
-public class SyncExecutor<T> {
+public final class SyncExecutor<T> {
 
     private Supplier<T> supplier;
     private Expect<T> expect;
 
-    public SyncExecutor(Supplier<T> supplier) {
+    SyncExecutor(Supplier<T> supplier) {
         this.supplier = supplier;
     }
 
