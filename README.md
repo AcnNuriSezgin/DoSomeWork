@@ -64,7 +64,7 @@ There are kind of two execution type one of them SyncExecutor, other one of them
 * You can use AsyncExecution same like SyncExecutions. When need listen to pipeline end can you **doOnEnd** method, that method requires a runnable object. It will be doing after pipeline execute all conditions and actions. **Terminable** object give a chance for terminating all pipeline. 
 
 ```java
-    Terminable terminable = thatAsync(() -> "Value")
+    Terminable terminable = DoSomeWork.thatAsync(() -> "Value")
             .expect(new TestAsyncPredicate(StringUtil::shouldEmpty))
             .then(new TestAsyncConsumer(str -> object.setId(1)))
             .or(new TestAsyncPredicate(str -> len(str) < 3))
