@@ -17,6 +17,10 @@ after_success: ./gradlew bintrayUpload
 notifications:
   email: false
 
+branches:
+  only:
+    master
+
 sudo: false
 
 before_cache:
