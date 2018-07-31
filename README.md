@@ -4,7 +4,7 @@ Perform conditional expressions as a pipeline like that simple if-elseif-else cy
 ## Prerequisites
 First, dependency must be added to build.gradle file.
 ```groovy
-implementation 'nurisezgin.com.dosomework:dosomework:1.0.0'
+implementation 'nurisezgin.com.dosomework:dosomework:1.0.1'
 ```
 ## How To Use
 There are kind of two execution type one of them SyncExecutor, other one of them AsyncExecutor. For sequential conditions and actions can use **that**, for asyncs should use **thatAsync**.
